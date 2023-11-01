@@ -61,6 +61,74 @@ Copy redis.conf file and move into above folders and update port nubers accordin
 
 
 
+# Steps to Create API - Gateway by using Spring boot
+
+-- Create sample Spirng boot Applicaiton by using Spring Initilizer and add below given dependencies
+ - spring-boot-starter-webflux
+ - spring-cloud-starter
+ - spring-boot-devtools
+ - spring-boot-starter-data-redis-reactive
+ -  spring-cloud-starter-gateway
+ -  spring-cloud-starter-netflix-eureka-client
+ -  spring-boot-starter-actuator
+
+ # application.properties
+   server.port=9000
+   spring.application.name=api-gateway
+
+   spring.cloud.gateway.discovery.locator.enabled=true
+
+   management.endpoint.health.show-details=always
+   management.endpoints.web.exposure.include=*
+
+   # application.properties
+   spring:
+  application:
+    name:  api-gateway
+  cloud:
+    gateway:
+      routes:
+         - id: user-service
+           uri: lb://user-service
+           predicates:
+            - Path=/api/users/**
+
+         - id: product-service
+           uri: lb://product-service
+           predicates:
+            - Path=/api/products/**
+           filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@userKeyResolver}'
+                redis-rate-limiter.replenishRate: 2
+                redis-rate-limiter.burstCapacity: 4
+  data:
+    redis:
+      cluster:
+        nodes:
+          - 127.0.0.1:6001 
+          - 127.0.0.1:6002 
+          - 127.0.0.1:6003 
+          - 127.0.0.1:6004 
+          - 127.0.0.1:6005 
+          - 127.0.0.1:6006
+        max-redirects: 2
+          
+  management:
+    health:
+      redis:
+        enabled: true
+
+
+
+
+        
+
+
+ 
+
+
 
 
 
