@@ -81,7 +81,7 @@ Copy redis.conf file and move into above folders and update port nubers accordin
    management.endpoint.health.show-details=always
    management.endpoints.web.exposure.include=*
 
-   # application.properties
+   # application.yml
    spring:
   application:
     name:  api-gateway
